@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import ReactQueryProvider from '@/lib/ReactQueryProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,8 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-        <SpeedInsights />
+        <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-[family-name:var(--font-geist-sans)] sm:p-20">
+          <main className="row-start-2 flex flex-col items-center gap-[32px] sm:items-start">
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+            <SpeedInsights />
+          </main>
+        </div>
       </body>
     </html>
   );
