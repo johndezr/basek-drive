@@ -3,5 +3,8 @@ export type File = {
   name: string;
   createdTime: string;
   mimeType: string;
-  size: number;
+  size: number | string | null;
+  parents?: string[];
+  children?: File[];
+  type: 'file' | 'folder';
 };

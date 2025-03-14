@@ -1,3 +1,5 @@
+'use client';
+
 import ConnectGdButton from '@/components/ui/ConnectGoogleDrive';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 

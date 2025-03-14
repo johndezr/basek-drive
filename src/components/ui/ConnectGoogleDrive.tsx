@@ -2,7 +2,7 @@
 
 import { useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
-import { Button } from '@/components/ui/shadcdn/Button';
+import { Button } from '@/components/ui/shadcn/Button';
 import { useRouter } from 'next/navigation';
 import { fetchUserInfo } from '@/services/user';
 import type { User } from '@/app/domain/models/User';

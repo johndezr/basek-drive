@@ -1,6 +1,8 @@
 import { google } from 'googleapis';
 import { headers } from 'next/headers';
-import { DRIVE_VERSION, DRIVE_PAGE_SIZE, DRIVE_FIELDS } from '../../../config/constants';
+import { DRIVE_VERSION, DRIVE_PAGE_SIZE, DRIVE_FIELDS } from '@/config/constants';
+import { transformFile } from '@/utils/transformFile';
+import type { File } from '@/app/domain/models/File';
 
 export async function GET() {
   const headersList = await headers();
@@ -17,7 +19,11 @@ export async function GET() {
       pageSize: DRIVE_PAGE_SIZE,
       fields: DRIVE_FIELDS,
     });
-    return Response.json(response.data.files);
+
+    const files = response.data.files as File[];
+    const fileTreeData = transformFile(files);
+
+    return Response.json(fileTreeData);
   } catch (error) {
     console.error('Error al obtener archivos:', error);
     return Response.json({ error: 'Error al obtener archivos de Google Drive' }, { status: 500 });
