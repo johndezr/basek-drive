@@ -9,12 +9,19 @@ import FileListData from '@/components/modules/FileListData';
 import UserData from '@/components/modules/UserData';
 import UserSkeleton from '@/components/ui/UserSkeleton';
 import FileTreeSkeleton from '@/components/ui/FileTreeSkeleton';
+import { useRouter } from 'next/navigation';
 
 export default function FileMain({ token }: { token: string }) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const router = useRouter();
+
+  const logOut = () => {
+    document.cookie = `accessToken=; path=/; max-age=0; SameSite=Lax`;
+    router.push(`/`);
+  };
 
   return (
-    <div>
+    <>
       <Card className="w-[550px]">
         <CardHeader>
           <CardTitle>
@@ -25,7 +32,9 @@ export default function FileMain({ token }: { token: string }) {
               <Button className="ml-auto" variant="secondary" onClick={() => setDialogOpen(true)}>
                 Indexar archivos
               </Button>
-              <Button className="ml-auto">Cerrar sesion</Button>
+              <Button onClick={logOut} className="ml-auto">
+                Cerrar sesion
+              </Button>
             </div>
           </CardTitle>
           <Separator />
@@ -42,6 +51,6 @@ export default function FileMain({ token }: { token: string }) {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
