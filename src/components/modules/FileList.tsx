@@ -1,14 +1,11 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { fetchUserFiles } from '@/services/file';
-import type { File } from '@/app/domain/models/File';
-import { QUERY_KEYS } from '@/config/constants';
+import type { File } from '@/domain/models/File';
 import FileTree from '@/components/ui/FileTree';
 import { useState } from 'react';
 
-// // Función para encontrar un elemento por ID en la estructura de datos
-// const findItemById = (data: DriveItem[], id: string): DriveItem | null => {
+// Función para encontrar un elemento por ID en la estructura de datos
+// const findItemById = (data: File[], id: string): File | null => {
 //   for (const item of data) {
 //     if (item.id === id) return item;
 //     if (item.children) {
@@ -19,33 +16,22 @@ import { useState } from 'react';
 //   return null;
 // };
 
-export default function FileList({ token, userId }: { token: string; userId: string }) {
-  const {
-    data: files,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: [QUERY_KEYS.USER_FILES, userId],
-    queryFn: () => fetchUserFiles(token),
-  });
+const getAllIds = (item: File): string[] => {
+  if (!item) return [];
+  const ids = [item.id];
+  if (item.children) {
+    item.children.forEach((child: File) => {
+      ids.push(...getAllIds(child));
+    });
+  }
+  return ids;
+};
+
+export default function FileList({ files }: { files: File[] }) {
   // Usamos un array de strings para almacenar solo los IDs seleccionados
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  if (isLoading) return <p>Cargando archivos...</p>;
-  if (error) return <p>Error al cargar archivos</p>;
-  if (!files) return <p>No tienes archivos aún creados.</p>;
-
   const toggleSelection = (item: File, isChecked: boolean) => {
-    const getAllIds = (item: File): string[] => {
-      if (!item) return [];
-      const ids = [item.id];
-      if (item.children) {
-        item.children.forEach((child) => {
-          ids.push(...getAllIds(child));
-        });
-      }
-      return ids;
-    };
     if (isChecked) {
       // Agregar el elemento y todos sus hijos
       const idsToAdd = getAllIds(item);
@@ -57,7 +43,7 @@ export default function FileList({ token, userId }: { token: string; userId: str
     }
   };
 
-  // // Convertimos los IDs seleccionados a objetos para mostrarlos en el JSON
+  // Convertimos los IDs seleccionados a objetos para mostrarlos en el JSON
   // const selectedItems = selectedIds
   //   .map((id) => {
   //     const item = findItemById(files, id);
@@ -67,17 +53,8 @@ export default function FileList({ token, userId }: { token: string; userId: str
 
   return (
     <div>
-      {files?.length > 0 ? (
-        <div>
-          <FileTree files={files} selectedItems={selectedIds} onToggle={toggleSelection} />
-          <div>
-            <h3>Elementos seleccionados:</h3>
-            {/* <pre>{JSON.stringify(selectedItems, null, 2)}</pre> */}
-            <pre>{JSON.stringify(files, null, 2)}</pre>
-          </div>
-        </div>
-      ) : (
-        <p>No hay archivos disponibles.</p>
+      {files?.length > 0 && (
+        <FileTree files={files} selectedItems={selectedIds} onToggle={toggleSelection} />
       )}
     </div>
   );

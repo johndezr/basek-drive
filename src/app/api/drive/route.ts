@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 import { headers } from 'next/headers';
 import { DRIVE_VERSION, DRIVE_PAGE_SIZE, DRIVE_FIELDS } from '@/config/constants';
 import { transformFile } from '@/utils/transformFile';
-import type { File } from '@/app/domain/models/File';
+import type { File } from '@/domain/models/File';
 
 export async function GET() {
   const headersList = await headers();

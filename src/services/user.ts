@@ -1,10 +1,10 @@
-import type { User } from '@/app/domain/models/User';
+import type { User } from '@/domain/models/User';
 
 export const fetchUserInfo = async (token: string): Promise<User> => {
   if (!token) throw new Error('No token found');
 
   try {
-    const response = await fetch('/api/user', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/user`, {
       headers: {
         AccessToken: token,
       },

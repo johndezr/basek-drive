@@ -1,10 +1,11 @@
-import type { File } from '@/app/domain/models/File';
+import type { File } from '@/domain/models/File';
 import { FOLDER_MIME_TYPE } from '@/config/constants';
 
 export const transformFile = (files: File[]) => {
   const itemMap = {} as Record<string, File>;
   const rootItems = [] as File[];
 
+  // Crear todos los nodos
   files.forEach((file: File) => {
     const isFolder = file.mimeType === FOLDER_MIME_TYPE;
     const item = {
@@ -16,9 +17,12 @@ export const transformFile = (files: File[]) => {
       type: isFolder ? 'folder' : 'file',
       children: isFolder ? [] : undefined,
     } as File;
-
     itemMap[file.id] = item;
+  });
 
+  // Establecer relaciones padre-hijo
+  files.forEach((file: File) => {
+    const item = itemMap[file.id];
     if (file.parents && file.parents.length > 0) {
       const parentId = file.parents[0];
       const parent = itemMap[parentId];

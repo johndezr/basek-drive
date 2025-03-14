@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/shadcn/Accordion';
 import { Checkbox } from '@/components/ui/shadcn/Checkbox';
 import { Folder, File as FileIcon } from 'lucide-react';
-import type { File } from '@/app/domain/models/File';
+import type { File } from '@/domain/models/File';
 
 type FileTreeProps = {
   files: File[];
@@ -37,7 +37,7 @@ const FileTreeItem = ({
   // Para archivos individuales
   if (item.type === 'file') {
     return (
-      <div className={`pl-${level * 4} flex items-center gap-2 py-2`}>
+      <div className={`ml-${level * 4} flex items-center gap-0 pt-2 pb-0`}>
         <Checkbox checked={isSelected} onCheckedChange={handleCheckboxChange} className="mr-2" />
         <FileIcon className="mr-2 h-4 w-4" />
         <span className="text-sm">{item.name}</span>
@@ -47,8 +47,8 @@ const FileTreeItem = ({
 
   // Para carpetas (con accordion)
   return (
-    <Accordion type="single" collapsible className={`pl-${level * 4}`}>
-      <AccordionItem value={item.id} className="border-b-0">
+    <Accordion type="single" collapsible>
+      <AccordionItem value={item.id}>
         <div className="flex items-center">
           <Checkbox
             checked={isSelected}
@@ -56,14 +56,14 @@ const FileTreeItem = ({
             className="mr-2"
             onClick={(e) => e.stopPropagation()} // Evitar que el click en el checkbox expanda/colapse el accordion
           />
-          <AccordionTrigger className="py-2 hover:no-underline">
+          <AccordionTrigger className="py-2">
             <div className="flex items-center">
               <Folder className="mr-2 h-4 w-4" />
               <span className="text-sm">{item.name}</span>
             </div>
           </AccordionTrigger>
         </div>
-        <AccordionContent>
+        <AccordionContent className="pb-1">
           {item.children?.map((child) => (
             <FileTreeItem
               key={child.id}
@@ -79,7 +79,7 @@ const FileTreeItem = ({
   );
 };
 
-const FileTree: React.FC<FileTreeProps> = ({ files, selectedItems, onToggle }) => {
+const FileTree = ({ files, selectedItems, onToggle }: FileTreeProps) => {
   return (
     <div className="file-tree max-h-[600px] overflow-auto rounded-md border p-4">
       {files.map((item) => (

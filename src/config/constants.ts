@@ -4,6 +4,7 @@ export const DRIVE_PAGE_SIZE = 10;
 export const DRIVE_SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
 export const QUERY_KEYS = {
   USER_FILES: 'userFiles',
+  USER_INFO: 'userInfo',
 };
 export const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
 export const FILE_MIME_TYPE = 'application/vnd.google-apps.file';

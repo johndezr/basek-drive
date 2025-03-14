@@ -1,10 +1,9 @@
-import type { File } from '@/app/domain/models/File';
+import type { File } from '@/domain/models/File';
 
 export const fetchUserFiles = async (token: string): Promise<File[]> => {
   if (!token) throw new Error('No token provided');
-
   try {
-    const response = await fetch(`/api/drive`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/drive`, {
       headers: {
         AccessToken: token,
       },

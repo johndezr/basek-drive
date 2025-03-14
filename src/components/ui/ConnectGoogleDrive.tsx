@@ -4,37 +4,50 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { Button } from '@/components/ui/shadcn/Button';
 import { useRouter } from 'next/navigation';
-import { fetchUserInfo } from '@/services/user';
-import type { User } from '@/app/domain/models/User';
+import { LoaderCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 const ConnectGdButton = () => {
-  interface ErrorResponse {
-    error?: string;
-    error_description?: string;
-    error_uri?: string;
-  }
-
-  const [error, setError] = useState<ErrorResponse | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      fetchUserInfo(tokenResponse.access_token).then((user) => {
-        setUser(user);
-        router.push(`/files/${user.sub}`);
-      });
+      try {
+        document.cookie = `accessToken=${tokenResponse.access_token}; path=/; max-age=3600; SameSite=Lax`;
+        router.push(`/dashboard`);
+      } catch (error) {
+        setLoading(false);
+        toast.error('Error al obtener la información del usuario');
+        throw error;
+      }
     },
-    onError: (err) => setError(err),
+    onError: () => {
+      setLoading(false);
+      toast.error('Error al conectar tu cuenta de Google');
+    },
+    onNonOAuthError: () => {
+      setLoading(false);
+      toast.error(
+        'Popup window is failed to open or closed before an OAuth response is returned. Please, try again.',
+      );
+    },
     scope: `${process.env.NEXT_PUBLIC_GOOGLE_API_URL}/auth/drive.readonly`,
     flow: 'implicit',
   });
 
   return (
     <div>
-      <Button onClick={() => login()}>Conectar con Google Drive</Button>
-      {user && <p>Conectado como: {user.name}</p>}
-      {error && <p>Error al conectar: {error.error}</p>}
+      <Button
+        onClick={() => {
+          setLoading(true);
+          login();
+        }}
+        disabled={loading}
+      >
+        {loading && <LoaderCircle className="h-6 w-6 animate-spin" />}
+        Conectar con Google Drive
+      </Button>
     </div>
   );
 };

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { headers, cookies } from 'next/headers';
 
 export async function GET() {
-  // const accessToken = req.headers.get('Authorization')?.split(' ')[1];
   const cookieStore = await cookies();
   const headersList = await headers();
   const token = headersList.get('AccessToken');
@@ -26,7 +25,6 @@ export async function GET() {
     const user = await response.json();
     return NextResponse.json(user);
   } catch (error) {
-    console.log(error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }
