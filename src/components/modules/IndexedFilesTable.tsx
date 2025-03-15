@@ -15,6 +15,7 @@ interface IndexedFilesTableProps {
   loadingFileId: string | null;
   handleUpload: (fileId: string) => void;
   handleRemoveIndex: (fileId: string) => void;
+  removeJupyterFile: (fileName: string, fileId: string) => void;
 }
 
 export default function IndexedFilesTable({
@@ -22,6 +23,7 @@ export default function IndexedFilesTable({
   loadingFileId,
   handleUpload,
   handleRemoveIndex,
+  removeJupyterFile,
 }: IndexedFilesTableProps) {
   return (
     <Table>
@@ -45,7 +47,9 @@ export default function IndexedFilesTable({
             <TableCell>
               <Button
                 disabled={loadingFileId === file.id}
-                onClick={() => handleUpload(file.id)}
+                onClick={() =>
+                  file.indexed ? removeJupyterFile(file.name, file.id) : handleUpload(file.id)
+                }
                 variant="secondary"
               >
                 {loadingFileId === file.id && <LoaderCircle className="h-6 w-6 animate-spin" />}

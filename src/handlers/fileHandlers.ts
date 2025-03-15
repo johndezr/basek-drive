@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { getSelectedFiles, updateLocalStorageFiles } from '@/utils/fileUtils';
-import { downloadFileFromDrive, uploadFileToJupyter } from '@/services/fileService';
+import { downloadFileFromDrive, uploadFileToJupyter, removeFileFromJupyter } from '@/services/file';
 import type { File } from '@/domain/models/File';
 
 export const handleIndex = (
@@ -39,7 +39,42 @@ export const handleRemoveIndex = (
   toast.success('Archivo desindexado correctamente');
 };
 
-export const handleUpload = async (
+export const removeJupyterFile = async (
+  fileName: string,
+  setLoadingFileId: (fileId: string | null) => void,
+  fileId: string,
+  setIndexedFiles: (files: File[]) => void,
+) => {
+  try {
+    setLoadingFileId(fileId);
+    const response = await removeFileFromJupyter(fileName);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error response from Jupyter:', errorText);
+      toast.error('Error al eliminar el archivo');
+      return;
+    }
+
+    const files = JSON.parse(localStorage.getItem('files') || '[]');
+    const fileIndex = files.findIndex((file: File) => file.id === fileId);
+    if (fileIndex !== -1) {
+      delete files[fileIndex].indexed;
+      localStorage.setItem('files', JSON.stringify(files));
+    }
+    setIndexedFiles(files);
+
+    toast.success('Archivo eliminado correctamente');
+  } catch (error) {
+    console.error('Error al eliminar el archivo:', error);
+    toast.error('Error al eliminar el archivo');
+    return;
+  } finally {
+    setLoadingFileId(null);
+  }
+};
+
+export const handleJupyterUpload = async (
   fileId: string,
   setLoadingFileId: (fileId: string | null) => void,
   setIndexedFiles: (files: File[]) => void,

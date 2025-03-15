@@ -15,7 +15,12 @@ import type { File } from '@/domain/models/File';
 import IndexedFilesTable from '@/components/modules/IndexedFilesTable';
 import FileSelectionDialog from '@/components/modules/FileSelectionDialog';
 import { loadIndexedFilesFromLocalStorage } from '@/utils/fileUtils';
-import { handleIndex, handleRemoveIndex, handleUpload } from '@/handlers/fileHandlers';
+import {
+  handleIndex,
+  handleRemoveIndex,
+  handleJupyterUpload,
+  removeJupyterFile,
+} from '@/handlers/fileHandlers';
 
 export default function FileMain({ token }: { token: string }) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -73,20 +78,27 @@ export default function FileMain({ token }: { token: string }) {
           <Separator />
         </CardHeader>
         <CardContent className="min-h-[200px]">
-          {isLoading ? (
-            <FileTreeSkeleton />
-          ) : indexedFiles.length > 0 ? (
-            <IndexedFilesTable
-              indexedFiles={indexedFiles}
-              loadingFileId={loadingFileId}
-              handleUpload={(fileId) => handleUpload(fileId, setLoadingFileId, setIndexedFiles)}
-              handleRemoveIndex={(fileId) =>
-                handleRemoveIndex(fileId, indexedFiles, setIndexedFiles)
-              }
-            />
-          ) : (
-            <p className="text-center text-xl text-gray-500">No hay archivos indexados aún.</p>
-          )}
+          <Suspense fallback={<FileTreeSkeleton />}>
+            {isLoading ? (
+              <FileTreeSkeleton />
+            ) : indexedFiles.length > 0 ? (
+              <IndexedFilesTable
+                indexedFiles={indexedFiles}
+                loadingFileId={loadingFileId}
+                handleUpload={(fileId) =>
+                  handleJupyterUpload(fileId, setLoadingFileId, setIndexedFiles)
+                }
+                removeJupyterFile={(fileName, fileId) =>
+                  removeJupyterFile(fileName, setLoadingFileId, fileId, setIndexedFiles)
+                }
+                handleRemoveIndex={(fileId) =>
+                  handleRemoveIndex(fileId, indexedFiles, setIndexedFiles)
+                }
+              />
+            ) : (
+              <p className="text-center text-xl text-gray-500">No hay archivos indexados aún.</p>
+            )}
+          </Suspense>
         </CardContent>
       </Card>
       <FileSelectionDialog

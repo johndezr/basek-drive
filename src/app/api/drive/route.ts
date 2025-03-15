@@ -15,11 +15,8 @@ export async function GET() {
     auth.setCredentials({ access_token: token });
 
     const drive = google.drive({ version: DRIVE_VERSION, auth });
-
-    // Consulta para filtrar archivos por tipo y excluir los archivos en la papelera
     const query = `
       trashed = false AND (
-        mimeType = 'application/vnd.google-apps.folder' OR
         mimeType = 'application/pdf' OR
         mimeType = 'application/json' OR
         mimeType = 'application/javascript' OR
@@ -63,12 +60,12 @@ export async function GET() {
       )
     `
       .replace(/\s+/g, ' ')
-      .trim(); // Eliminar espacios extra y saltos de línea
+      .trim();
 
     const response = await drive.files.list({
       pageSize: DRIVE_PAGE_SIZE,
       fields: DRIVE_FIELDS,
-      orderBy: 'createdTime desc', // Ordenar por fecha de modificación descendente
+      orderBy: 'createdTime desc',
       q: query,
     });
 

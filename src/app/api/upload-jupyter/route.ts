@@ -11,16 +11,14 @@ export async function POST(req: Request) {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
-  const jupyterUrl = `${process.env.NEXT_PUBLIC_JUPYTER_URL}/api/contents/base-knowledge/${file.name}`;
-  const jupyterToken = process.env.NEXT_PUBLIC_JUPYTER_TOKEN;
-
-  console.log('Uploading file to Jupyter:', jupyterUrl, jupyterToken);
+  const JUPYTER_API_URL = `${process.env.NEXT_PUBLIC_JUPYTER_URL}/api/contents/base-knowledge/${file.name}`;
+  const JUPYTER_TOKEN = process.env.NEXT_PUBLIC_JUPYTER_TOKEN;
 
   try {
-    const response = await fetch(jupyterUrl, {
+    const response = await fetch(JUPYTER_API_URL, {
       method: 'PUT',
       headers: {
-        Authorization: `Token ${jupyterToken}`,
+        Authorization: `Token ${JUPYTER_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
