@@ -1,3 +1,5 @@
+//TODO: Make an extension of this type for the Google Drive API
+
 export type File = {
   id: string;
   name: string;
@@ -8,4 +10,5 @@ export type File = {
   children?: File[];
   type: 'file' | 'folder';
   indexed?: boolean;
+  parentId?: string;
 };

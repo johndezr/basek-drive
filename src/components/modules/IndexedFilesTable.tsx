@@ -14,12 +14,14 @@ interface IndexedFilesTableProps {
   indexedFiles: File[];
   loadingFileId: string | null;
   handleUpload: (fileId: string) => void;
+  handleRemoveIndex: (fileId: string) => void;
 }
 
 export default function IndexedFilesTable({
   indexedFiles,
   loadingFileId,
   handleUpload,
+  handleRemoveIndex,
 }: IndexedFilesTableProps) {
   return (
     <Table>
@@ -30,6 +32,7 @@ export default function IndexedFilesTable({
           <TableHead>Created Date</TableHead>
           <TableHead>File Size</TableHead>
           <TableHead>Jupyter</TableHead>
+          <TableHead>Eliminar</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -51,6 +54,15 @@ export default function IndexedFilesTable({
                   : file.indexed
                     ? 'Desindexar'
                     : 'Indexar'}
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button
+                disabled={loadingFileId === file.id}
+                onClick={() => handleRemoveIndex(file.id)}
+                variant="destructive"
+              >
+                Eliminar
               </Button>
             </TableCell>
           </TableRow>

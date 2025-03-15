@@ -44,8 +44,8 @@ export default function FileSelectionDialog({
           )}
         </Suspense>
         <DialogFooter>
-          <Button onClick={onIndex}>
-            Indexar {selectedItems.length > 0 ? `(${selectedItems.length})` : ''}
+          <Button disabled={!selectedItems.length} onClick={onIndex}>
+            Indexar
           </Button>
         </DialogFooter>
       </DialogContent>
