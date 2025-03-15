@@ -13,7 +13,7 @@ export default function UserData({ token }: { token: string }) {
   return (
     <>
       <Avatar>
-        <AvatarImage src={user.picture} />
+        <AvatarImage className="w-10 rounded-4xl" src={`${user.picture}?.jpg`} />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
       <span>{user.name}</span>

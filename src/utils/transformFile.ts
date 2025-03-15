@@ -27,6 +27,7 @@ export const transformFile = (files: File[]) => {
       const parentId = file.parents[0];
       const parent = itemMap[parentId];
       if (parent && parent.children) {
+        item.parentId = parentId;
         parent.children.push(item);
       } else {
         rootItems.push(item);

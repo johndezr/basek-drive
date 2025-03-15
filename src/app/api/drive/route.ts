@@ -15,9 +15,61 @@ export async function GET() {
     auth.setCredentials({ access_token: token });
 
     const drive = google.drive({ version: DRIVE_VERSION, auth });
+
+    // Consulta para filtrar archivos por tipo y excluir los archivos en la papelera
+    const query = `
+      trashed = false AND (
+        mimeType = 'application/vnd.google-apps.folder' OR
+        mimeType = 'application/pdf' OR
+        mimeType = 'application/json' OR
+        mimeType = 'application/javascript' OR
+        mimeType = 'application/typescript' OR
+        mimeType = 'text/plain' OR
+        mimeType = 'text/markdown' OR
+        mimeType = 'text/html' OR
+        mimeType = 'text/css' OR
+        mimeType = 'text/x-python' OR
+        mimeType = 'application/x-ipynb+json' OR
+        mimeType CONTAINS 'image/' OR
+        name contains '.js' OR
+        name contains '.ts' OR
+        name contains '.jsx' OR
+        name contains '.tsx' OR
+        name contains '.md' OR
+        name contains '.markdown' OR
+        name contains '.txt' OR
+        name contains '.html' OR
+        name contains '.htm' OR
+        name contains '.css' OR
+        name contains '.scss' OR
+        name contains '.less' OR
+        name contains '.json' OR
+        name contains '.py' OR
+        name contains '.ipynb' OR
+        name contains '.xml' OR
+        name contains '.yaml' OR
+        name contains '.yml' OR
+        name contains '.csv' OR
+        name contains '.sql' OR
+        name contains '.java' OR
+        name contains '.c' OR
+        name contains '.cpp' OR
+        name contains '.h' OR
+        name contains '.go' OR
+        name contains '.rs' OR
+        name contains '.rb' OR
+        name contains '.php' OR
+        name contains '.swift'
+      )
+    `
+      .replace(/\s+/g, ' ')
+      .trim(); // Eliminar espacios extra y saltos de línea
+
     const response = await drive.files.list({
       pageSize: DRIVE_PAGE_SIZE,
       fields: DRIVE_FIELDS,
+      orderBy: 'createdTime desc', // Ordenar por fecha de modificación descendente
+      q: query,
     });
 
     const files = response.data.files as File[];

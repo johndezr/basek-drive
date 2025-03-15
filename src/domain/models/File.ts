@@ -7,4 +7,5 @@ export type File = {
   parents?: string[];
   children?: File[];
   type: 'file' | 'folder';
+  indexed?: boolean;
 };
