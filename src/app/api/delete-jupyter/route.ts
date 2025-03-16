@@ -22,7 +22,6 @@ export async function DELETE(req: Request) {
       if (deleteResponse.ok) {
         return NextResponse.json({
           message: `File ${fileName} and folder ${rootFolder} (with all its contents) removed`,
-          deletedRoot: rootFolder,
         });
       } else {
         const errorText = await deleteResponse.text();
@@ -40,12 +39,7 @@ export async function DELETE(req: Request) {
   } else {
     try {
       if (!fileName) {
-        return (
-          NextResponse.json({ error: 'Filename is required' }),
-          {
-            status: 400,
-          }
-        );
+        return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
       }
 
       const response = await fetch(`${JUPYTER_API_URL}/${fileName}`, {
