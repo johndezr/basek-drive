@@ -68,10 +68,10 @@ export default function FileMain({ token }: { token: string }) {
                 variant="secondary"
                 onClick={openDialogAndCheckFilesAlreadyIndexed}
               >
-                Indexar archivos
+                Index Files
               </Button>
               <Button onClick={logOut} className="ml-auto">
-                Cerrar sesion
+                Logout
               </Button>
             </div>
           </CardTitle>
@@ -85,18 +85,24 @@ export default function FileMain({ token }: { token: string }) {
               <IndexedFilesTable
                 indexedFiles={indexedFiles}
                 loadingFileId={loadingFileId}
-                handleUpload={(fileId) =>
-                  handleJupyterUpload(fileId, setLoadingFileId, setIndexedFiles)
+                handleUpload={(file) =>
+                  handleJupyterUpload(file, setLoadingFileId, setIndexedFiles)
                 }
-                removeJupyterFile={(fileName, fileId) =>
-                  removeJupyterFile(fileName, setLoadingFileId, fileId, setIndexedFiles)
+                removeJupyterFile={(fileName, fileId, parentFolderName) =>
+                  removeJupyterFile(
+                    fileName,
+                    setLoadingFileId,
+                    fileId,
+                    parentFolderName,
+                    setIndexedFiles,
+                  )
                 }
                 handleRemoveIndex={(fileId) =>
                   handleRemoveIndex(fileId, indexedFiles, setIndexedFiles)
                 }
               />
             ) : (
-              <p className="text-center text-xl text-gray-500">No hay archivos indexados aún.</p>
+              <p className="text-center text-xl text-gray-500">No files are indexed yet.</p>
             )}
           </Suspense>
         </CardContent>

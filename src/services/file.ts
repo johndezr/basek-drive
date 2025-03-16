@@ -50,15 +50,16 @@ export const uploadFileToJupyter = async (formData: FormData) => {
   }
 };
 
-export const removeFileFromJupyter = async (filename: string) => {
-  if (!filename) throw new Error('No filename provided');
+export const removeFileFromJupyter = async (fileName: string, parentFolderName: string) => {
+  console.log('removeFileFromJupyter', fileName, parentFolderName);
+  if (!fileName) throw new Error('No filename provided');
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/delete-jupyter`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ filename }),
+      body: JSON.stringify({ fileName, parentFolderName }),
     });
 
     return Promise.resolve(response);

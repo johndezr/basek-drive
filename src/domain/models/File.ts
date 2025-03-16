@@ -11,4 +11,5 @@ export type File = {
   type: 'file' | 'folder';
   indexed?: boolean;
   parentId?: string;
+  parentFolderName: string;
 };

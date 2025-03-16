@@ -23,3 +23,14 @@ export const loadIndexedFilesFromLocalStorage = (): File[] => {
   const storedFiles = localStorage.getItem('files');
   return storedFiles ? JSON.parse(storedFiles) : [];
 };
+
+export const getAllIds = (item: File): string[] => {
+  if (!item) return [];
+  const ids = [item.id];
+  if (item.children) {
+    item.children.forEach((child: File) => {
+      ids.push(...getAllIds(child));
+    });
+  }
+  return ids;
+};

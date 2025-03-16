@@ -45,7 +45,7 @@ export default function FileSelectionDialog({
         </Suspense>
         <DialogFooter>
           <Button disabled={!selectedItems.length} onClick={onIndex}>
-            Indexar
+            Index
           </Button>
         </DialogFooter>
       </DialogContent>

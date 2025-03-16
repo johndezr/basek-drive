@@ -1,16 +1,6 @@
 import FileList from '@/components/modules/FileList';
 import type { File } from '@/domain/models/File';
-
-const getAllIds = (item: File): string[] => {
-  if (!item) return [];
-  const ids = [item.id];
-  if (item.children) {
-    item.children.forEach((child: File) => {
-      ids.push(...getAllIds(child));
-    });
-  }
-  return ids;
-};
+import { getAllIds } from '@/utils/fileUtils';
 
 export default function FileListData({
   selectedItems,

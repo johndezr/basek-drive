@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
       mimeType,
     });
   } catch (error) {
-    console.error('Error al obtener el archivo:', error);
-    return Response.json({ error: 'Error al obtener el archivo de Google Drive' }, { status: 500 });
+    return Response.json({ error }, { status: 500 });
   }
 }

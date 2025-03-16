@@ -13,9 +13,9 @@ import type { File } from '@/domain/models/File';
 interface IndexedFilesTableProps {
   indexedFiles: File[];
   loadingFileId: string | null;
-  handleUpload: (fileId: string) => void;
+  handleUpload: (file: File) => void;
   handleRemoveIndex: (fileId: string) => void;
-  removeJupyterFile: (fileName: string, fileId: string) => void;
+  removeJupyterFile: (fileName: string, fileId: string, parentFolderName: string) => void;
 }
 
 export default function IndexedFilesTable({
@@ -32,6 +32,7 @@ export default function IndexedFilesTable({
           <TableHead>Nombre</TableHead>
           <TableHead>mimeType</TableHead>
           <TableHead>Created Date</TableHead>
+          <TableHead>Parent Folders</TableHead>
           <TableHead>File Size</TableHead>
           <TableHead>Jupyter</TableHead>
           <TableHead>Eliminar</TableHead>
@@ -43,12 +44,15 @@ export default function IndexedFilesTable({
             <TableCell>{file.name}</TableCell>
             <TableCell>{file.mimeType}</TableCell>
             <TableCell>{file.createdTime}</TableCell>
+            <TableCell>{file.parentFolderName ? file.parentFolderName : '-'}</TableCell>
             <TableCell>{file.size}</TableCell>
             <TableCell>
               <Button
                 disabled={loadingFileId === file.id}
                 onClick={() =>
-                  file.indexed ? removeJupyterFile(file.name, file.id) : handleUpload(file.id)
+                  file.indexed
+                    ? removeJupyterFile(file.name, file.id, file.parentFolderName)
+                    : handleUpload(file)
                 }
                 variant="secondary"
               >

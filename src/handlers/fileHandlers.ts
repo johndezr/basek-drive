@@ -21,6 +21,7 @@ export const handleIndex = (
   }
 
   const updatedFiles = [...indexedFiles, ...newFiles];
+
   updateLocalStorageFiles(updatedFiles);
   setIndexedFiles(updatedFiles);
 
@@ -43,11 +44,12 @@ export const removeJupyterFile = async (
   fileName: string,
   setLoadingFileId: (fileId: string | null) => void,
   fileId: string,
+  parentFolderName: string,
   setIndexedFiles: (files: File[]) => void,
 ) => {
   try {
     setLoadingFileId(fileId);
-    const response = await removeFileFromJupyter(fileName);
+    const response = await removeFileFromJupyter(fileName, parentFolderName);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -75,14 +77,14 @@ export const removeJupyterFile = async (
 };
 
 export const handleJupyterUpload = async (
-  fileId: string,
+  file: File,
   setLoadingFileId: (fileId: string | null) => void,
   setIndexedFiles: (files: File[]) => void,
 ) => {
-  if (!fileId) return;
-  setLoadingFileId(fileId);
+  if (!file.id) return;
+  setLoadingFileId(file.id);
 
-  const driveData = await downloadFileFromDrive(fileId);
+  const driveData = await downloadFileFromDrive(file.id);
   if (driveData.error) {
     setLoadingFileId(null);
     return;
@@ -90,9 +92,12 @@ export const handleJupyterUpload = async (
 
   const fileContent = atob(driveData.fileContent);
   const fileName = driveData.fileName;
+  const content = new Blob([fileContent], { type: driveData.mimeType });
 
   const formData = new FormData();
-  formData.append('file', new Blob([fileContent], { type: driveData.mimeType }), fileName);
+  formData.append('file', content, fileName);
+  formData.append('fileName', fileName);
+  formData.append('parentFolderName', file.parentFolderName);
 
   try {
     const response = await uploadFileToJupyter(formData);
@@ -106,7 +111,7 @@ export const handleJupyterUpload = async (
     }
 
     const files = JSON.parse(localStorage.getItem('files') || '[]');
-    const fileIndex = files.findIndex((file: File) => file.id === fileId);
+    const fileIndex = files.findIndex((f: File) => f.id === file.id);
     if (fileIndex !== -1) {
       files[fileIndex].indexed = true;
       localStorage.setItem('files', JSON.stringify(files));

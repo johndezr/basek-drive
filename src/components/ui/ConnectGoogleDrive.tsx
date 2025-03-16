@@ -18,13 +18,13 @@ const ConnectGdButton = () => {
         router.push(`/dashboard`);
       } catch (error) {
         setLoading(false);
-        toast.error('Error al obtener la información del usuario');
+        toast.error('Error obtaining user information');
         throw error;
       }
     },
     onError: () => {
       setLoading(false);
-      toast.error('Error al conectar tu cuenta de Google');
+      toast.error('Error connecting your Google account');
     },
     onNonOAuthError: () => {
       setLoading(false);
@@ -46,7 +46,7 @@ const ConnectGdButton = () => {
         disabled={loading}
       >
         {loading && <LoaderCircle className="h-6 w-6 animate-spin" />}
-        Conectar con Google Drive
+        Connect to Google Drive
       </Button>
     </div>
   );

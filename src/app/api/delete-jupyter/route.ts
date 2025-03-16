@@ -1,34 +1,67 @@
 import { NextResponse } from 'next/server';
 
 export async function DELETE(req: Request) {
-  try {
-    const { filename } = (await req.json()) as { filename: string };
+  const { fileName, parentFolderName } = (await req.json()) as {
+    fileName: string;
+    parentFolderName: string;
+  };
 
-    if (!filename) {
-      return new Response(JSON.stringify({ error: 'Filename is required' }), { status: 400 });
+  const JUPYTER_API_URL = `${process.env.NEXT_PUBLIC_JUPYTER_URL}/api/contents`;
+  const JUPYTER_TOKEN = process.env.NEXT_PUBLIC_JUPYTER_TOKEN;
+
+  if (parentFolderName) {
+    // Eliminamos la carpeta raíz, lo que eliminará todas las subcarpetas
+    const rootFolder = parentFolderName && parentFolderName.split('/').filter(Boolean)[0];
+
+    try {
+      const deleteResponse = await fetch(`${JUPYTER_API_URL}/${rootFolder}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Token ${JUPYTER_TOKEN}` },
+      });
+
+      if (deleteResponse.ok) {
+        return NextResponse.json({
+          message: `File ${fileName} and folder ${rootFolder} (with all its contents) removed`,
+          deletedRoot: rootFolder,
+        });
+      } else {
+        const errorText = await deleteResponse.text();
+        return NextResponse.json({
+          message: `File ${fileName} deleted, but could not delete root folder ${rootFolder}`,
+          error: errorText,
+        });
+      }
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Error processing root folder deletion', err },
+        { status: 500 },
+      );
     }
+  } else {
+    try {
+      if (!fileName) {
+        return (
+          NextResponse.json({ error: 'Filename is required' }),
+          {
+            status: 400,
+          }
+        );
+      }
 
-    const JUPYTER_API_URL = `${process.env.NEXT_PUBLIC_JUPYTER_URL}/api/contents/base-knowledge/${filename}`;
-    const JUPYTER_TOKEN = process.env.NEXT_PUBLIC_JUPYTER_TOKEN;
+      const response = await fetch(`${JUPYTER_API_URL}/${fileName}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${JUPYTER_TOKEN}`,
+        },
+      });
 
-    const response = await fetch(JUPYTER_API_URL, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Token ${JUPYTER_TOKEN}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error response from Jupyter:', errorText);
-      return NextResponse.json({ error: 'Failed to delete file from Jupyter' }, { status: 500 });
+      if (!response.ok) {
+        const errorText = await response.text();
+        return NextResponse.json({ error: errorText }, { status: 500 });
+      }
+      return NextResponse.json({ message: `File ${fileName} deleted` });
+    } catch (error) {
+      return NextResponse.json({ error }, { status: 500 });
     }
-
-    return new Response(JSON.stringify({ message: `Archivo ${filename} eliminado` }), {
-      status: 200,
-    });
-  } catch (error) {
-    console.error('Error al subir archivo a Jupyter:', error);
-    return NextResponse.json({ error: 'Error al eliminar archivo en Jupyter' }, { status: 500 });
   }
 }
