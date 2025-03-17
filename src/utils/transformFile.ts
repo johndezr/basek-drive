@@ -1,5 +1,6 @@
 import type { File } from '@/domain/models/File';
 import { FOLDER_MIME_TYPE } from '@/config/constants';
+import { formatCreatedTime, formatFileSize } from '@/utils/formatting';
 
 export const transformFile = (files: File[]) => {
   const itemMap = {} as Record<string, File>;
@@ -7,13 +8,14 @@ export const transformFile = (files: File[]) => {
 
   // Crear todos los nodos
   files.forEach((file: File) => {
+    console.log(formatCreatedTime(file.createdTime));
     const isFolder = file.mimeType === FOLDER_MIME_TYPE;
     const item = {
       id: file.id,
       name: file.name,
-      createdTime: file.createdTime,
+      createdTime: formatCreatedTime(file.createdTime),
       mimeType: file.mimeType,
-      size: file.size,
+      size: formatFileSize(Number(file.size)),
       type: isFolder ? 'folder' : 'file',
       children: isFolder ? [] : undefined,
       parentFolderName: '',

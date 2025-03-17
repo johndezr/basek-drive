@@ -16,7 +16,7 @@ export const handleIndex = (
   );
 
   if (newFiles.length === 0) {
-    toast.info('Todos los archivos seleccionados ya están indexados');
+    toast.info('All selected files are already indexed');
     return;
   }
 
@@ -26,7 +26,7 @@ export const handleIndex = (
   setIndexedFiles(updatedFiles);
 
   setDialogOpen(false);
-  toast.success(`${newFiles.length} archivos seleccionados para indexar`);
+  toast.success(`Files selected for indexing`);
 };
 
 export const handleRemoveIndex = (
@@ -37,7 +37,7 @@ export const handleRemoveIndex = (
   const updatedFiles = indexedFiles.filter((file) => file.id !== fileId);
   updateLocalStorageFiles(updatedFiles);
   setIndexedFiles(updatedFiles);
-  toast.success('Archivo desindexado correctamente');
+  toast.success('File successfully deindexed');
 };
 
 export const removeJupyterFile = async (
@@ -52,9 +52,8 @@ export const removeJupyterFile = async (
     const response = await removeFileFromJupyter(fileName, parentFolderName);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error response from Jupyter:', errorText);
-      toast.error('Error al eliminar el archivo');
+      await response.text();
+      toast.error('Error deleting file');
       return;
     }
 
@@ -66,11 +65,10 @@ export const removeJupyterFile = async (
     }
     setIndexedFiles(files);
 
-    toast.success('Archivo eliminado correctamente');
+    toast.success('File successfully deleted');
   } catch (error) {
-    console.error('Error al eliminar el archivo:', error);
     toast.error('Error al eliminar el archivo');
-    return;
+    throw error;
   } finally {
     setLoadingFileId(null);
   }
@@ -104,8 +102,8 @@ export const handleJupyterUpload = async (
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error response from Jupyter:', errorText);
-      toast.error('Error al subir el archivo');
+      console.error('Respuesta de error de Jupyter:', errorText);
+      toast.error('Error uploading file');
       setLoadingFileId(null);
       return;
     }
@@ -117,12 +115,10 @@ export const handleJupyterUpload = async (
       localStorage.setItem('files', JSON.stringify(files));
     }
     setIndexedFiles(files);
-    toast.success('Archivo indexado correctamente');
+    toast.success('File indexed correctly');
     setLoadingFileId(null);
   } catch (error) {
     setLoadingFileId(null);
-    console.error('Error al subir el archivo:', error);
-    toast.error('Error al subir el archivo');
-    return;
+    toast.error('Error uploading the file: ' + error);
   }
 };

@@ -37,7 +37,10 @@ const FileTreeItem = ({
   // Para archivos individuales
   if (item.type === 'file') {
     return (
-      <div className={`ml-${level * 4} flex items-center gap-0 pt-2 pb-0`}>
+      <div
+        className={`flex items-center gap-0 pt-2 pb-0`}
+        style={{ marginLeft: `${level * 1}rem` }}
+      >
         <Checkbox checked={isSelected} onCheckedChange={handleCheckboxChange} className="mr-2" />
         <FileIcon className="mr-2 h-4 w-4" />
         <span className="text-sm">{item.name}</span>
@@ -49,7 +52,7 @@ const FileTreeItem = ({
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value={item.id}>
-        <div className="flex items-center">
+        <div className="flex items-center" style={{ marginLeft: `${level * 1}rem` }}>
           <Checkbox
             checked={isSelected}
             onCheckedChange={handleCheckboxChange}
