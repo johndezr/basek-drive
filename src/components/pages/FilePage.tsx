@@ -6,11 +6,10 @@ import { Button } from '@/components/ui/shadcn/Button';
 import { Separator } from '@/components/ui/shadcn/Separator';
 import UserData from '@/components/modules/UserData';
 import UserSkeleton from '@/components/ui/UserSkeleton';
-import FileTreeSkeleton from '@/components/ui/FileTreeSkeleton';
 import { useRouter } from 'next/navigation';
 import { QUERY_KEYS } from '@/config/constants';
 import { fetchUserFiles } from '@/services/file';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { File } from '@/domain/models/File';
 import IndexedFilesTable from '@/components/modules/IndexedFilesTable';
 import FileSelectionDialog from '@/components/modules/FileSelectionDialog';
@@ -27,15 +26,17 @@ export default function FileMain({ token }: { token: string }) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [indexedFiles, setIndexedFiles] = useState<File[]>([]);
   const [loadingFileId, setLoadingFileId] = useState<string | null>(null);
+  const [fetchFiles, setFetchFiles] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setIndexedFiles(loadIndexedFilesFromLocalStorage());
   }, []);
 
-  const { data: files, isLoading } = useSuspenseQuery({
+  const { data: files, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER_FILES],
     queryFn: () => fetchUserFiles(token),
+    enabled: fetchFiles,
   });
 
   const logOut = () => {
@@ -44,13 +45,15 @@ export default function FileMain({ token }: { token: string }) {
   };
 
   const openDialogAndCheckFilesAlreadyIndexed = () => {
-    if (!files) return;
-    const updatedFiles = files.map((file) => ({
-      ...file,
-      disabled: indexedFiles.some((indexedFile) => indexedFile.id === file.id),
-    }));
-    const alreadyIndexedIds = updatedFiles.filter((file) => file.disabled).map((file) => file.id);
-    setSelectedItems(alreadyIndexedIds);
+    setFetchFiles(true);
+    if (files) {
+      const updatedFiles = files.map((file) => ({
+        ...file,
+        disabled: indexedFiles.some((indexedFile) => indexedFile.id === file.id),
+      }));
+      const alreadyIndexedIds = updatedFiles.filter((file) => file.disabled).map((file) => file.id);
+      setSelectedItems(alreadyIndexedIds);
+    }
     setDialogOpen(true);
   };
 
@@ -77,37 +80,32 @@ export default function FileMain({ token }: { token: string }) {
           </CardTitle>
           <Separator />
         </CardHeader>
-        <CardContent className="min-h-[200px]">
-          <Suspense fallback={<FileTreeSkeleton />}>
-            {isLoading ? (
-              <FileTreeSkeleton />
-            ) : indexedFiles.length > 0 ? (
-              <IndexedFilesTable
-                indexedFiles={indexedFiles}
-                loadingFileId={loadingFileId}
-                handleUpload={(file) =>
-                  handleJupyterUpload(file, setLoadingFileId, setIndexedFiles)
-                }
-                removeJupyterFile={(fileName, fileId, parentFolderName) =>
-                  removeJupyterFile(
-                    fileName,
-                    setLoadingFileId,
-                    fileId,
-                    parentFolderName,
-                    setIndexedFiles,
-                  )
-                }
-                handleRemoveIndex={(fileId) =>
-                  handleRemoveIndex(fileId, indexedFiles, setIndexedFiles)
-                }
-              />
-            ) : (
-              <p className="text-center text-xl text-gray-500">No files are indexed yet.</p>
-            )}
-          </Suspense>
+        <CardContent className="min-h-[300px]">
+          {indexedFiles.length > 0 ? (
+            <IndexedFilesTable
+              indexedFiles={indexedFiles}
+              loadingFileId={loadingFileId}
+              handleUpload={(file) => handleJupyterUpload(file, setLoadingFileId, setIndexedFiles)}
+              removeJupyterFile={(fileName, fileId, parentFolderName) =>
+                removeJupyterFile(
+                  fileName,
+                  setLoadingFileId,
+                  fileId,
+                  parentFolderName,
+                  setIndexedFiles,
+                )
+              }
+              handleRemoveIndex={(fileId) =>
+                handleRemoveIndex(fileId, indexedFiles, setIndexedFiles)
+              }
+            />
+          ) : (
+            <p className="text-center text-xl text-gray-500">No files are indexed yet.</p>
+          )}
         </CardContent>
       </Card>
       <FileSelectionDialog
+        isLoading={isLoading}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         files={files || []}

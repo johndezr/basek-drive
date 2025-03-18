@@ -12,6 +12,7 @@ import { Suspense } from 'react';
 import type { File } from '@/domain/models/File';
 
 interface FileSelectionDialogProps {
+  isLoading: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   files: File[];
@@ -21,6 +22,7 @@ interface FileSelectionDialogProps {
 }
 
 export default function FileSelectionDialog({
+  isLoading,
   open,
   onOpenChange,
   files,
@@ -35,12 +37,16 @@ export default function FileSelectionDialog({
           <DialogTitle>Archivos disponibles</DialogTitle>
         </DialogHeader>
         <Suspense fallback={<FileTreeSkeleton />}>
-          {open && (
-            <FileListData
-              onSelectedItemsChange={onSelectedItemsChange}
-              selectedItems={selectedItems}
-              files={files}
-            />
+          {isLoading ? (
+            <FileTreeSkeleton />
+          ) : (
+            open && (
+              <FileListData
+                onSelectedItemsChange={onSelectedItemsChange}
+                selectedItems={selectedItems}
+                files={files}
+              />
+            )
           )}
         </Suspense>
         <DialogFooter>

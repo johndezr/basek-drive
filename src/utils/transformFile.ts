@@ -8,7 +8,6 @@ export const transformFile = (files: File[]) => {
 
   // Crear todos los nodos
   files.forEach((file: File) => {
-    console.log(formatCreatedTime(file.createdTime));
     const isFolder = file.mimeType === FOLDER_MIME_TYPE;
     const item = {
       id: file.id,

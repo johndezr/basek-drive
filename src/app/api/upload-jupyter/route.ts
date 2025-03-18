@@ -4,7 +4,6 @@ const JUPYTER_API_URL = `${process.env.NEXT_PUBLIC_JUPYTER_URL}/api/contents`;
 const JUPYTER_TOKEN = process.env.NEXT_PUBLIC_JUPYTER_TOKEN;
 
 async function folderExists(folderPath: string) {
-  console.log('folderExists', `${JUPYTER_API_URL}/${folderPath}`);
   const res = await fetch(`${JUPYTER_API_URL}/${folderPath}`, {
     method: 'GET',
     headers: {

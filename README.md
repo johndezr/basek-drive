@@ -73,7 +73,20 @@ This video explains the available options: <https://www.youtube.com/watch?v=mnW6
 
 ## Dealing with Google Drive API
 
-TBD
+Dealing with Google consist in two main parts:
+
+1. Configure OAuth 2.0 for authorization and get the token (oAuth) <https://developers.google.com/identity/protocols/oauth2>, for this project, I'm using the @react-oauth/google <https://www.npmjs.com/package/@react-oauth/google>
+2. Use the token to access to the Drive API <https://developers.google.com/drive/api/reference/rest/v3?hl=es-419>
+
+Besides of that, first I had to deal with the Google Cloud Platform and get is something called a Client ID & Client Secret. I had to create A New Project and Fill out the “OAuth Consent Screen”.
+
+## Approach
+
+1. I created a High-Level Design System (info below, changed happenend after the first iteration)
+2. Desing mockups for the interface
+3. Dealing with Google Drive API
+4. Dealing with the jupyter notebook api (local and production)
+5. Go to code
 
 ## High-Level Design System
 
@@ -140,8 +153,8 @@ A high-level design system that outlines functional requirements and the RADIO s
 {
   "name": "file.pdf",
   "size": 1024,
-  "fileType": "pdf",
-  "date": "2025-03-15"
+  "mimeType": "pdf",
+  "createdTime": "2025-03-15"
 }
 ```
 
@@ -195,6 +208,14 @@ We need the following HTTP APIs:
 - **React Query**:
   - Leveraging caching for queries?
 
+## Things to improve
+
+1. Error handle with ErrorBoundary (google auth toke expire after 1 hour)
+2. Sorting and Filtering files
+3. ScrollInfinity or pagination for more than 20 files
+
 ## Whats Next
 
-TBD
+1. Base knowledge screen (match with jupyter notebook API)
+2. Homescreen better design and interface
+3. UI Responsive

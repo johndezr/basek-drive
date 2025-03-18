@@ -51,7 +51,6 @@ export const uploadFileToJupyter = async (formData: FormData) => {
 };
 
 export const removeFileFromJupyter = async (fileName: string, parentFolderName: string) => {
-  console.log('removeFileFromJupyter', fileName, parentFolderName);
   if (!fileName) throw new Error('No filename provided');
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/delete-jupyter`, {
