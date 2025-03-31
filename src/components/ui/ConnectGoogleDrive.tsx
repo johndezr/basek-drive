@@ -37,18 +37,17 @@ const ConnectGdButton = () => {
   });
 
   return (
-    <div>
-      <Button
-        onClick={() => {
-          setLoading(true);
-          login();
-        }}
-        disabled={loading}
-      >
-        {loading && <LoaderCircle className="h-6 w-6 animate-spin" />}
-        Connect to Google Drive
-      </Button>
-    </div>
+    <Button
+      onClick={() => {
+        setLoading(true);
+        login();
+      }}
+      data-testid="connect-google-drive-button"
+      disabled={loading}
+    >
+      {loading && <LoaderCircle className="h-6 w-6 animate-spin" />}
+      Connect to Google Drive
+    </Button>
   );
 };
 

@@ -9,7 +9,7 @@ export const formatFileSize = (size: number) => {
   }
   const k = 1024;
   const dm = 2;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
 
   const i = Math.floor(Math.log(size) / Math.log(k));
 

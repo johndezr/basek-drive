@@ -30,6 +30,10 @@ export const downloadFileFromDrive = async (fileId: string) => {
       body: JSON.stringify({ fileId }),
     });
 
+    if (!response.ok) {
+      throw new Error('Failed to fetch user files');
+    }
+
     return response.json();
   } catch (error) {
     return Promise.reject(error);
@@ -43,6 +47,10 @@ export const uploadFileToJupyter = async (formData: FormData) => {
       method: 'POST',
       body: formData,
     });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload file');
+    }
 
     return response;
   } catch (error) {

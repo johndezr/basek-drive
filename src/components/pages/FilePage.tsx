@@ -30,7 +30,9 @@ export default function FileMain({ token }: { token: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    setIndexedFiles(loadIndexedFilesFromLocalStorage());
+    const files = loadIndexedFilesFromLocalStorage();
+    console.log('Files loaded from localStorage:', files);
+    setIndexedFiles(files);
   }, []);
 
   const { data: files, isLoading } = useQuery({

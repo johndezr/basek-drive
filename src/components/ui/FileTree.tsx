@@ -41,7 +41,12 @@ const FileTreeItem = ({
         className={`flex items-center gap-0 pt-2 pb-0`}
         style={{ marginLeft: `${level * 1}rem` }}
       >
-        <Checkbox checked={isSelected} onCheckedChange={handleCheckboxChange} className="mr-2" />
+        <Checkbox
+          data-testid={item.id}
+          checked={isSelected}
+          onCheckedChange={handleCheckboxChange}
+          className="mr-2"
+        />
         <FileIcon className="mr-2 h-4 w-4" />
         <span className="text-sm">{item.name}</span>
       </div>
